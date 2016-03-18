@@ -7,10 +7,10 @@
 //
 
 #import "ConvertViewController.h"
-#define RED_INDEX   0
-#define GREEN_INDEX 1
-#define BLUE_INDEX  2
-#define START_INDEX 0
+#define RED_INDEX   0 //........... index in the array for the red label
+#define GREEN_INDEX 1 //........... index in the array for the green label
+#define BLUE_INDEX  2 //........... index in the array for the blue label
+#define START_INDEX 0 //........... starting index
 
 @interface ConvertViewController ()
 
@@ -46,10 +46,11 @@ NSMutableArray *normalizedArray; //. variable to hold the array of noramlized fl
     
     if( [hexInput length] == 6 && [ self isValidHex:[hexInput uppercaseString] ] ){ //... if the input length and values are correct
         convertedFloats = [self hexConvert:hexInput atIndex:START_INDEX]; //............. convert them to normalized floats and put into array
+        [self.hexConvertTextField resignFirstResponder]; //.............................. hides keyboard on button click
         NSLog(@"%@", convertedFloats); //................................................ print array to console
     }
     else{//.............................................................................. length or values are not correct
-        NSLog(@"False");
+        [self alertUser];
     }
 
 }
@@ -90,6 +91,21 @@ NSMutableArray *normalizedArray; //. variable to hold the array of noramlized fl
 -(BOOL)isValidHex:(NSString *)checkThisString{
     NSCharacterSet *hexChars = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789ABCDEF"] invertedSet]; //. custom character set with all valid hex values
     return (NSNotFound == [ checkThisString rangeOfCharacterFromSet:hexChars].location ); //............................. checks to see if all characters are valid
+}
+
+#pragma mark - Alert
+
+// Method to throw an alert to the user if character count is too low or invalid characters
+-(void)alertUser{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Oops!"
+                                                                   message:@"Invalid characters or length.\n Please type six characters using 0-9 and A-F only"
+                                                            preferredStyle:UIAlertControllerStyleAlert]; //........................................................ the alert controller with title and message
+    
+    UIAlertAction *okButton = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action){}]; //....................................................................... OK button
+    [alert addAction:okButton]; //................................................................................................................................. put button into alert controller
+    [self presentViewController:alert animated:YES completion:nil]; //............................................................................................. present them!! THEY'RE FRIENDS!
 }
 
 @end
