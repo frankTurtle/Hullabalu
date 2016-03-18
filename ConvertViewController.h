@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  ConvertViewController.h
 //  HexConverter
 //
 //  Created by OSX on 3/18/16.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface ConvertViewController : UIViewController
 
 @end
-
