@@ -7,6 +7,9 @@
 //
 
 #import "ConvertViewController.h"
+#define RED_INDEX  0
+#define GREEN_INDEX  1
+#define BLUE_INDEX  2
 
 @interface ConvertViewController ()
 
@@ -19,9 +22,12 @@
 
 @implementation ConvertViewController
 
+NSArray *normalizedArray; //. variable to hold the array of noramlized floats
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    normalizedArray = @[ @0.0, @0.0, @0.0 ]; //. initialize the array
 }
 
 - (void)didReceiveMemoryWarning {
@@ -37,7 +43,7 @@
     NSString *hexInput = self.hexConvertTextField.text;
     
     if( [hexInput length] == 6 && [ self isValidHex:[hexInput uppercaseString] ] ){
-        NSLog(@"True");
+        [self hexConvert:hexInput];
     }
     else
         NSLog(@"False");
@@ -45,7 +51,14 @@
 
 #pragma mark - Helper
 -(void)hexConvert:(NSString *)hexToConvert{
-//    NSArray *normalizedArray = @[ @0.0, @0.0, @0.0 ];
+    int index;
+    
+    if( [hexToConvert length] != 0 ){
+        NSLog(@"%@", normalizedArray);
+        self.redLabel.text =   [NSString stringWithFormat:@"%.2f", [normalizedArray[RED_INDEX] floatValue] ];
+//        self.greenLabel.text = normalizedArray[ GREEN_INDEX ];
+//        self.blueLabel.text =  normalizedArray[ BLUE_INDEX ];
+    }
     
 }
 
