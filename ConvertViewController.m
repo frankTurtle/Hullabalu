@@ -7,9 +7,10 @@
 //
 
 #import "ConvertViewController.h"
-#define RED_INDEX  0
-#define GREEN_INDEX  1
+#define RED_INDEX   0
+#define GREEN_INDEX 1
 #define BLUE_INDEX  2
+#define START_INDEX 0
 
 @interface ConvertViewController ()
 
@@ -22,12 +23,12 @@
 
 @implementation ConvertViewController
 
-NSArray *normalizedArray; //. variable to hold the array of noramlized floats
+NSMutableArray *normalizedArray; //. variable to hold the array of noramlized float objects
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    normalizedArray = @[ @0.0, @0.0, @0.0 ]; //. initialize the array
+    normalizedArray = [[NSMutableArray alloc] initWithCapacity:3]; //. initizlize array with 3 values
 }
 
 - (void)didReceiveMemoryWarning {
@@ -41,30 +42,46 @@ NSArray *normalizedArray; //. variable to hold the array of noramlized floats
 // converts the hex-code input to an array of three normalized floating point numbers
 - (IBAction)convertButton:(id)sender {
     NSString *hexInput = self.hexConvertTextField.text;
+    NSArray *convertedFloats;
     
     if( [hexInput length] == 6 && [ self isValidHex:[hexInput uppercaseString] ] ){
-        [self hexConvert:hexInput];
+        convertedFloats = [self hexConvert:hexInput atIndex:START_INDEX];
+        NSLog(@"%@", convertedFloats);
     }
     else
         NSLog(@"False");
 }
 
 #pragma mark - Helper
--(void)hexConvert:(NSString *)hexToConvert{
-    int index;
-    
-    if( [hexToConvert length] != 0 ){
-        NSLog(@"%@", normalizedArray);
-        self.redLabel.text =   [NSString stringWithFormat:@"%.2f", [normalizedArray[RED_INDEX] floatValue] ];
-//        self.greenLabel.text = normalizedArray[ GREEN_INDEX ];
-//        self.blueLabel.text =  normalizedArray[ BLUE_INDEX ];
+
+// Method to convert the value from the TextField to a normalized floating point number
+// populates the array with values as well
+-(NSArray *)hexConvert:(NSString *)hexToConvert atIndex:(int)index{
+    if( [hexToConvert length] == 0 ){
+        self.redLabel.text =   [NSString stringWithFormat:@"%.2f", [normalizedArray[RED_INDEX]   floatValue] ];
+        self.greenLabel.text = [NSString stringWithFormat:@"%.2f", [normalizedArray[GREEN_INDEX] floatValue] ];
+        self.blueLabel.text =  [NSString stringWithFormat:@"%.2f", [normalizedArray[BLUE_INDEX]  floatValue] ];
+    }
+    else{
+        NSString *firstTwoCharacters = [hexToConvert substringToIndex:2];
+        NSScanner *converter = [NSScanner scannerWithString:firstTwoCharacters];
+        
+        unsigned convertedHex = 0;
+        [converter scanHexInt:&convertedHex];
+        
+        NSNumber *convertedNum = [NSNumber numberWithFloat:[self normalizeThisNumber:convertedHex withBase:255.0]];
+        [normalizedArray insertObject:convertedNum atIndex:index];
+        
+        [self hexConvert:[hexToConvert substringFromIndex:2] atIndex:++index];
     }
     
+    return [normalizedArray mutableCopy];
 }
 
-//-(int)normalizeThisNumber:(int)numberToConvert withBase:(int)base{
-//    
-//}
+// Method to normalize a number passed in with a certain base
+-(float)normalizeThisNumber:(unsigned)numberToConvert withBase:(float)base{
+    return numberToConvert / base;
+}
 
 // Method to determine if the string contains valid characters in hex
 -(BOOL)isValidHex:(NSString *)checkThisString{
